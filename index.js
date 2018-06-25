@@ -51,6 +51,10 @@ app.get('/api/persons', (req, res) => {
   .then(result => {
     res.json(result.map(Person.format))
   })
+  .catch( error => {
+    console.log(error)
+    return res.status(500).json({error: error})
+  })
 })
 
 app.get('/api/persons/:id', (req, res) => {
@@ -85,18 +89,24 @@ app.post('/api/persons', (req, res) => {
     .then( result => {
       res.json(Person.format(result))
     })
+    .catch( error => {
+      console.log(error)
+      return res.status(500).json({error: error})
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = persons.find(p => p.id === id)
-
-  if(person) {
-    persons = persons.filter(p => p.id !== id)
-    res.status(204).end()
-  }
-
-  res.status(404).end()
+  const id = req.params.id
+  
+  Person
+    .deleteOne({_id: id})
+    .then( result => {
+      res.status(204).end()
+    })
+    .catch( error => {
+      console.log(error)
+      return res.status(500).json({error: error})
+    })
 })
 
 app.get('/info', (req, res) => {
