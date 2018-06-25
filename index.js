@@ -109,6 +109,20 @@ app.delete('/api/persons/:id', (req, res) => {
     })
 })
 
+app.put('/api/persons/:id', (req, res) => {
+  const id = req.params.id
+  
+  Person
+    .findOneAndUpdate({_id: id}, {number: req.body.number}, {new: true})
+    .then( result => {
+      res.json(Person.format(result))
+    })
+    .catch( error => {
+      console.log(error)
+      return res.status(500).json({error: error})
+    })
+})
+
 app.get('/info', (req, res) => {
   const date = new Date()
   const henkiloita = persons.length
