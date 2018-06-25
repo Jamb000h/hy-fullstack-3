@@ -21,7 +21,7 @@ const json = {
     },
     {
       name: "Lea Kutvonen",
-      number: 040-123456,
+      number: "040-123456",
       id: 4
     }
   ]
@@ -29,6 +29,17 @@ const json = {
 
 app.get('/api/persons', (req, res) => {
   res.json(json)
+})
+
+app.get('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id)
+  const person = json.persons.find(p => p.id === id)
+
+  if(person) {
+    return res.json(person)
+  }
+
+  res.status(404).end()
 })
 
 app.get('/info', (req, res) => {
@@ -40,7 +51,8 @@ app.get('/info', (req, res) => {
   text += '\n\n'
   text += date
 
-  res.writeHead(200, { 'Content-Type': 'text/plain' })
+  res.set('Content-Type', 'text/plain')
+  res.status(200)
   res.end(text)
 })
 
