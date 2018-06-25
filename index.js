@@ -82,20 +82,29 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({error: 'number is required'})
   }
 
-  const person = new Person({
-    name: body.name,
-    number: body.number
-  })
-
-  person
-    .save()
+  Person
+    .find({name: body.name})
     .then( result => {
-      res.json(Person.format(result))
+      if(result.length > 0) {
+        return res.status(400).json({error: "Duplicate name!"})
+      }
+
+      const person = new Person({
+        name: body.name,
+        number: body.number
+      })
+    
+      person
+        .save()
+        .then( result => {
+          res.json(Person.format(result))
+        })
     })
     .catch( error => {
       console.log(error)
       return res.status(500).json({error: error})
     })
+
 })
 
 app.delete('/api/persons/:id', (req, res) => {
