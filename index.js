@@ -18,82 +18,58 @@ app.use(bodyParser.json())
 app.use(express.static('build'))
 
 // Logging
-morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
+morgan.token('body', function (req) { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
-
-let persons = 
-  [
-    {
-      name: "Arto Hellas",
-      number: "040-123456",
-      id: 1
-    },
-    {
-      name: "Martti Tienari",
-      number: "040-123456",
-      id: 2
-    },
-    {
-      name: "Arto Järvinen",
-      number: "040-123456",
-      id: 3
-    },
-    {
-      name: "Lea Kutvonen",
-      number: "040-123456",
-      id: 4
-    }
-  ]
 
 app.get('/api/persons', (req, res) => {
   Person
-  .find({})
-  .then(result => {
-    res.json(result.map(Person.format))
-  })
-  .catch( error => {
-    console.log(error)
-    return res.status(500).json({error: error})
-  })
+    .find({})
+    .then(result => {
+      res.json(result.map(Person.format))
+    })
+    .catch( error => {
+      console.log(error)
+      return res.status(500).json({ error: error })
+    })
 })
 
 app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id
-  
+
   Person
-  .findOne({_id: id})
-  .then( result => {
-    res.json(Person.format(result))
-  })
-  .catch( error => {
-    console.log(error)
-    return res.status(404).json({error: error})
-  })
+    .findOne({ _id: id })
+    .then( result => {
+      res.json(Person.format(result))
+    })
+    .catch( error => {
+      console.log(error)
+      return res.status(404).json({ error: error })
+    })
 })
 
 app.post('/api/persons', (req, res) => {
   const body = req.body
 
   if(body.name === undefined) {
-    return res.status(400).json({error: 'name is required'})
+    return res.status(400).json({ error: 'name is required' })
   }
 
   if(body.number === undefined) {
-    return res.status(400).json({error: 'number is required'})
+    return res.status(400).json({ error: 'number is required' })
   }
 
   Person
-    .find({name: body.name})
+    .find({ name: body.name })
     .then( result => {
       if(result.length > 0) {
-        return res.status(400).json({error: "Duplicate name!"})
+        return res.status(400).json({ error: 'Duplicate name!' })
       }
 
       const person = new Person({
         name: body.name,
         number: body.number
       })
-    
+
       person
         .save()
         .then( result => {
@@ -102,36 +78,36 @@ app.post('/api/persons', (req, res) => {
     })
     .catch( error => {
       console.log(error)
-      return res.status(500).json({error: error})
+      return res.status(500).json({ error: error })
     })
 
 })
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = req.params.id
-  
+
   Person
-    .deleteOne({_id: id})
-    .then( result => {
+    .deleteOne({ _id: id })
+    .then( () => {
       res.status(204).end()
     })
     .catch( error => {
       console.log(error)
-      return res.status(500).json({error: error})
+      return res.status(500).json({ error: error })
     })
 })
 
 app.put('/api/persons/:id', (req, res) => {
   const id = req.params.id
-  
+
   Person
-    .findOneAndUpdate({_id: id}, {number: req.body.number}, {new: true})
+    .findOneAndUpdate({ _id: id }, { number: req.body.number }, { new: true })
     .then( result => {
       res.json(Person.format(result))
     })
     .catch( error => {
       console.log(error)
-      return res.status(500).json({error: error})
+      return res.status(500).json({ error: error })
     })
 })
 
@@ -151,7 +127,7 @@ app.get('/info', (req, res) => {
     })
     .catch( error => {
       console.log(error)
-      res.status(500).json({error: error})
+      res.status(500).json({ error: error })
     })
 })
 

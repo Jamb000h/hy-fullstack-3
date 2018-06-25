@@ -21,24 +21,24 @@ if (name && number) {
     name: name,
     number: number
   })
-  
+
   person
     .save()
-    .then( result => {
-      console.log("lisätään henkilö", name, "numero", number, "luetteloon")
+    .then( () => {
+      console.log('lisätään henkilö', name, 'numero', number, 'luetteloon')
       mongoose.connection.close()
     })
 }
 
 if (!name && !number) {
   Person
-  .find({})
-  .then(result => {
-    console.log("puhelinluettelo:")
-    result.forEach(person => {
-      console.log(person.name, person.number)
+    .find({})
+    .then(result => {
+      console.log('puhelinluettelo:')
+      result.forEach(person => {
+        console.log(person.name, person.number)
+      })
+      mongoose.connection.close()
     })
-    mongoose.connection.close()
-  })
 }
 
