@@ -49,7 +49,7 @@ app.get('/api/persons', (req, res) => {
   Person
   .find({})
   .then(result => {
-    res.json(persons.map(Person.format))
+    res.json(result.map(Person.format))
   })
 })
 
@@ -75,21 +75,16 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({error: 'number is required'})
   }
 
-  const person = persons.find(p => p.name === body.name)
-
-  if(person) {
-    return res.status(400).json({error: 'name must be unique'})
-  }
-
-  const newPerson = {
+  const person = new Person({
     name: body.name,
-    number: body.number,
-    id: Math.round(Math.random() * 10000000)
-  }
+    number: body.number
+  })
 
-  persons = persons.concat(newPerson)
-
-  res.json(newPerson)
+  person
+    .save()
+    .then( result => {
+      res.json(Person.format(result))
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
