@@ -47,13 +47,27 @@ app.get('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
 
-  const person = {
+  if(body.name === undefined) {
+    return res.status(400).json({error: 'name is required'})
+  }
+
+  if(body.number === undefined) {
+    return res.status(400).json({error: 'number is required'})
+  }
+
+  const person = json.persons.find(p => p.name === body.name)
+
+  if(person) {
+    return res.status(400).json({error: 'name must be unique'})
+  }
+
+  const newPerson = {
     name: body.name,
     number: body.number,
     id: Math.round(Math.random() * 10000000)
   }
 
-  json.persons = json.persons.concat(person)
+  json.persons = json.persons.concat(newPerson)
 
   res.json(person)
 })
