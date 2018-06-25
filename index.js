@@ -32,7 +32,7 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-  const date = Date.now()
+  const date = new Date()
   const henkiloita = json.persons.length
   let text = 'puhelinluettelossa on '
   text += henkiloita
