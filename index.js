@@ -49,7 +49,7 @@ app.get('/api/persons', (req, res) => {
   Person
   .find({})
   .then(result => {
-    res.json(result)
+    res.json(persons.map(Person.format))
   })
 })
 
