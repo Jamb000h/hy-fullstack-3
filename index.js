@@ -1,14 +1,23 @@
+// Requires
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
+const Person = require('./models/person')
 
+// Environment variables
+if ( process.env.NODE_ENV !== 'production' ) {
+  require('dotenv').config()
+}
+
+// Express & Middlewares
 const app = express()
 
 app.use(cors())
 app.use(bodyParser.json())
 app.use(express.static('build'))
 
+// Logging
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
 
@@ -37,7 +46,11 @@ let persons =
   ]
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person
+  .find({})
+  .then(result => {
+    res.json(result)
+  })
 })
 
 app.get('/api/persons/:id', (req, res) => {
