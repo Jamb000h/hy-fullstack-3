@@ -42,6 +42,18 @@ app.get('/api/persons/:id', (req, res) => {
   res.status(404).end()
 })
 
+app.delete('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id)
+  const person = json.persons.find(p => p.id === id)
+
+  if(person) {
+    json.persons = json.persons.filter(p => p.id !== id)
+    res.status(204).end()
+  }
+
+  res.status(404).end()
+})
+
 app.get('/info', (req, res) => {
   const date = new Date()
   const henkiloita = json.persons.length
