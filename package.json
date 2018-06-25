@@ -20,7 +20,8 @@
   "homepage": "https://github.com/Jamb000h/hy-fullstack-3#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
   },
   "devDependencies": {
     "nodemon": "^1.17.5"
