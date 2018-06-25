@@ -1,16 +1,18 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-
+const cors = require('cors')
 const morgan = require('morgan')
-morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
 
 const app = express()
 
+app.use(cors())
 app.use(bodyParser.json())
+
+morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
 
-const json = {
-  persons: [
+let persons = 
+  [
     {
       name: "Arto Hellas",
       number: "040-123456",
@@ -32,15 +34,14 @@ const json = {
       id: 4
     }
   ]
-}
 
 app.get('/api/persons', (req, res) => {
-  res.json(json)
+  res.json(persons)
 })
 
 app.get('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
-  const person = json.persons.find(p => p.id === id)
+  const person = persons.find(p => p.id === id)
 
   if(person) {
     return res.json(person)
@@ -60,7 +61,7 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({error: 'number is required'})
   }
 
-  const person = json.persons.find(p => p.name === body.name)
+  const person = persons.find(p => p.name === body.name)
 
   if(person) {
     return res.status(400).json({error: 'name must be unique'})
@@ -72,17 +73,17 @@ app.post('/api/persons', (req, res) => {
     id: Math.round(Math.random() * 10000000)
   }
 
-  json.persons = json.persons.concat(newPerson)
+  persons = persons.concat(newPerson)
 
   res.json(newPerson)
 })
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
-  const person = json.persons.find(p => p.id === id)
+  const person = persons.find(p => p.id === id)
 
   if(person) {
-    json.persons = json.persons.filter(p => p.id !== id)
+    persons = persons.filter(p => p.id !== id)
     res.status(204).end()
   }
 
@@ -91,7 +92,7 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.get('/info', (req, res) => {
   const date = new Date()
-  const henkiloita = json.persons.length
+  const henkiloita = persons.length
   let text = 'puhelinluettelossa on '
   text += henkiloita
   text += ' henkilon tiedot'
@@ -105,6 +106,8 @@ app.get('/info', (req, res) => {
 
 const PORT = 3001
 
-app.listen(PORT)
+const PORT = process.env.PORT || 3001
 
-console.log('Server running on port', PORT)
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
