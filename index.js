@@ -58,14 +58,17 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = persons.find(p => p.id === id)
-
-  if(person) {
-    return res.json(person)
-  }
-
-  res.status(404).end()
+  const id = req.params.id
+  
+  Person
+  .findOne({_id: id})
+  .then( result => {
+    res.json(Person.format(result))
+  })
+  .catch( error => {
+    console.log(error)
+    return res.status(404).json({error: error})
+  })
 })
 
 app.post('/api/persons', (req, res) => {
@@ -124,17 +127,23 @@ app.put('/api/persons/:id', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-  const date = new Date()
-  const henkiloita = persons.length
-  let text = 'puhelinluettelossa on '
-  text += henkiloita
-  text += ' henkilon tiedot'
-  text += '\n\n'
-  text += date
-
-  res.set('Content-Type', 'text/plain')
-  res.status(200)
-  res.end(text)
+  Person
+    .find({})
+    .then( result => {
+      const date = new Date()
+      const henkiloita = result.length
+      let text = 'puhelinluettelossa on '
+      text += henkiloita
+      text += ' henkilon tiedot'
+      text += '\n\n'
+      text += date
+      res.set('Content-Type', 'text/plain')
+      res.end(text)
+    })
+    .catch( error => {
+      console.log(error)
+      res.status(500).json({error: error})
+    })
 })
 
 const PORT = process.env.PORT || 3001
