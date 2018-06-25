@@ -31,6 +31,19 @@ app.get('/api/persons', (req, res) => {
   res.json(json)
 })
 
+app.get('/info', (req, res) => {
+  const date = Date.now()
+  const henkiloita = json.persons.length
+  let text = 'puhelinluettelossa on '
+  text += henkiloita
+  text += ' henkilon tiedot'
+  text += '\n\n'
+  text += date
+
+  res.writeHead(200, { 'Content-Type': 'text/plain' })
+  res.end(text)
+})
+
 const PORT = 3001
 
 app.listen(PORT)
